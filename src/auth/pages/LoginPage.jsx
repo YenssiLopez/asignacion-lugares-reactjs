@@ -124,7 +124,7 @@ export const LoginPage = () => {
             </Grid>
 
           </Grid>
-          </Grid>
+      </Grid>
 </Grid>
 </Box>
         </form>
