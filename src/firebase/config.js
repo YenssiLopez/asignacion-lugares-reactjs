@@ -2,20 +2,22 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore/lite';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getStorage } from 'firebase/storage';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBzQxyz7WTdDFGllcVFRy4oFmjsKgdtMfs",
-  authDomain: "react-cursos-66066.firebaseapp.com",
-  projectId: "react-cursos-66066",
-  storageBucket: "react-cursos-66066.appspot.com",
-  messagingSenderId: "674830610449",
-  appId: "1:674830610449:web:c6415fbc407c3e0e66c1b0"
+  apiKey: "AIzaSyBFaz5fAjpTNo66OpP8Ca1G6H2z8GgzBtU",
+  authDomain: "composite-watch-374915.firebaseapp.com",
+  projectId: "composite-watch-374915",
+  storageBucket: "composite-watch-374915.appspot.com",
+  messagingSenderId: "914309894082",
+  appId: "1:914309894082:web:efcacc6b9971b85307d05b"
 };
+
+
 
 // Initialize Firebase
 export const Firebaseapp = initializeApp(firebaseConfig);
 export const FirebaseAuth = getAuth (Firebaseapp);
 export const FirebaseDB = getFirestore(Firebaseapp);
+export const FirebaseSto = getStorage(Firebaseapp)

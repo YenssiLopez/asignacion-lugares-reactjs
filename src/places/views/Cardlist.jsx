@@ -1,24 +1,24 @@
-import React from 'react';
-import {  Autocomplete, Box, IconButton, Button, ButtonGroup, Modal, OutlinedInput, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
+import React, { useState } from 'react'
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import  getAllPlaces from '../../store/places/getAllPlaces';
 import { ModalLayout } from '../layout/ModalLayout';
 import { FabAddNew, FabEditAdd, FabShow } from '../components';
-import { useState } from 'react';
 import { useEffect } from 'react';
 import FabDelete from '../components/FabDelete';
+import { Autocomplete, Box, Button, ButtonGroup, Card, CardActions, CardContent, CardMedia, Divider, Grid, IconButton, InputBase, Modal, Paper, Stack, TextField, Toolbar, Typography } from '@mui/material';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore/lite';
 import { FirebaseDB } from '../../firebase/config';
 
 
-export const Tablelist = () => {
+export const Cardlist = () => {
 
   //----------------obtener los datos de firebase----------------------
   const [points, setPoints] = useState([]);
-
+  
   const actualizarEstadoPlaces = async () => {
     const collectionRef = collection(FirebaseDB, "points");
   const q = query(collectionRef, orderBy("timestamp", "desc"))
@@ -26,13 +26,12 @@ export const Tablelist = () => {
     setPoints(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
 
- 
   useEffect(() => {
     actualizarEstadoPlaces();
   }, []);
 
-  //-----------------Buscadores----------------------------------------
-  const filterData = (v) => {
+   //-----------------Buscadores----------------------------------------
+   const filterData = (v) => {
     if (v) {
       setPoints([v]);
     } else {
@@ -40,18 +39,6 @@ export const Tablelist = () => {
     }
   };
 
-//-----------------Paginación de Tabla---------------------------------
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
 //-----------------------------------------------------------------------
 //-------------------------Modales---------------------------------------
 
@@ -83,10 +70,14 @@ setFormid(datashow);
 handleOpenShow(); 
 }
 
+  
+
+
+
 
   return (
     <div>
-      {points.length > 0 && (
+ {points.length > 0 && (
            <Box sx={{ width: '100%' }}>
       <Toolbar>
     
@@ -96,7 +87,7 @@ handleOpenShow();
       id="tableTitle"
       component="div"
     >
-      Tabla de Lugares
+      Tarjetas de Lugares
     </Typography>
     <Stack direction="row" spacing={2} className="my-2 mb-2"><FilterListIcon sx={{ fontSize: 30 }} />
             <Autocomplete
@@ -118,78 +109,73 @@ handleOpenShow();
 </Toolbar>
 <Box sx={{ m: 2 }}/>
 <Typography variant="body2" color="text.secondary"> 
-        Lista de lugares que están registrado o registrar un nuevo Lugar
+        Trajetas de Lugares que están registrado o registrar un nuevo Lugar
         </Typography>
         <Box sx={{ m: 3 }}/>
-      
+<Button sx={{ right: -15, bottom: 10 }} onClick={handleOpen} variant="outlined" startIcon={<AddCircleIcon />}>Agregar</Button>
 
 
-<Button sx={{ right: -15, bottom: 10 }} onClick={handleOpen} variant="outlined" startIcon={<AddCircleIcon />}>Agregar
-      </Button>
+    <Grid container spacing={2} direction="row">
 
-<TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-      <TableHead>
-          <TableRow>
-          <TableCell>#</TableCell>
-            <TableCell align="center">Lugar</TableCell>
-            <TableCell align="center">Estado</TableCell>
-            <TableCell align="center">Latitud y Logitud</TableCell>
-            <TableCell align="center">Radio</TableCell>
-            <TableCell align="center">Tipo de Lugar</TableCell>
-            <TableCell align="center">Acción</TableCell>
-          </TableRow>
-        </TableHead>
+{
+          points.map((point) => (
+            <Grid item xs={3} key={point.id}>
+            <Card >
+         <CardMedia
+           component="img"
+           alt={point.lugar}
+           height="140"
+           image={point.url}
+         />
+         <CardContent>
+           <Typography gutterBottom variant="h5" component="div">
+             {point.lugar}
+           </Typography>
+           <Typography variant="body2" color="text.secondary">
+             Estado: {point.estado}
+           </Typography>
+           <Typography variant="body2" color="text.secondary">
+             Latitud y Longitud: {point.lat}, {point.lng}
+           </Typography>
+           <Typography variant="body2" color="text.secondary">
+             Tipo de Lugar: {point.tipo}
+           </Typography>
+         </CardContent>
+         <CardActions>
+         
+         <ButtonGroup>
+   
+           
+   <IconButton color="edit" aria-label="upload picture" onClick={() => { editData(point.id, point.lugar, 
+   point.estado, point.lat, point.lng, point.radio, point.tipo, point.referencia) }} component="label">
+   <EditIcon/>
+   </IconButton>
+   <IconButton color="show" aria-label="upload picture" onClick={() => { showData(point.id, point.lugar, 
+   point.estado, point.lat, point.lng, point.radio, point.tipo, point.referencia) }} component="label">
+   <VisibilityIcon/>
+   </IconButton>
+   <IconButton color="error" aria-label="upload picture" onClick={() => { FabDelete(point, actualizarEstadoPlaces) }} component="label">
+   <DeleteIcon/>
+   </IconButton>
+             </ButtonGroup>
+             
+         </CardActions>
+       </Card>
+   
+   
+   
+   
+     </Grid>
+          )
+        )}
 
-        <TableBody>
-       
-        {points
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-        .map((point, index) => (
-            <TableRow key={point.id} >
-              <TableCell component="th" scope="place">{index + 1} </TableCell>
-              <TableCell align="center">{point.lugar} </TableCell>
-              <TableCell align="center">{point.estado}</TableCell>
-              <TableCell align="center">{point.lat}, {point.lng}</TableCell>
-              <TableCell align="center">{point.radio}</TableCell>
-              <TableCell align="center">{point.tipo}</TableCell>
-              <TableCell>
-                  <ButtonGroup>
-
-        
-        <IconButton color="edit" aria-label="upload picture" onClick={() => { editData(point.id, point.lugar, 
-        point.estado, point.lat, point.lng, point.radio, point.tipo, point.referencia) }} component="label">
-        <EditIcon/>
-        </IconButton>
-        <IconButton color="show" aria-label="upload picture" onClick={() => { showData(point.id, point.lugar, 
-        point.estado, point.lat, point.lng, point.radio, point.tipo, point.referencia) }} component="label">
-        <VisibilityIcon/>
-        </IconButton>
-        <IconButton color="error" aria-label="upload picture" onClick={() => { FabDelete(point, actualizarEstadoPlaces) }} component="label">
-        <DeleteIcon/>
-        </IconButton>
-                      
-                  </ButtonGroup>
-              </TableCell>
-            </TableRow>
-)) }
-        </TableBody>
-       </Table>
-        </TableContainer>
-        <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={points.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+</Grid>
+    
 
 
-  
+
     </Box>    
-      )}
+)}
      {/* Modal de ingresar */}
      <Modal
         open={open}
@@ -211,7 +197,7 @@ handleOpenShow();
         aria-describedby="modal-modal-description"
       >
         <Box sx={{ ...ModalLayout, width: '50%' }}>
-        <FabEditAdd closeEventEdit={handleCloseEdit} actualizarEstadoPlaces={actualizarEstadoPlaces} fid={formid} />
+        <FabEditAdd closeEventEdit={handleCloseEdit} fid={formid} actualizarEstadoPlaces={actualizarEstadoPlaces} />
         </Box>
       </Modal>
 {/* Modal de Mostrar */}
@@ -225,7 +211,6 @@ handleOpenShow();
         <FabShow closeEventEdit={handleCloseShow} fid={formid} />
         </Box>
       </Modal>
-
     </div>
-  );
+  )
 }

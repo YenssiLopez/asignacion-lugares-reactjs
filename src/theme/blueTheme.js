@@ -11,11 +11,12 @@ export const blueTheme = createTheme({
         },
         error: {
             main: red.A400
+        },
+        edit: {
+            main: '#979494'
+        },
+        show: {
+            main: '#FFC300'
         }
     }
 })
-
-
-
-
-
