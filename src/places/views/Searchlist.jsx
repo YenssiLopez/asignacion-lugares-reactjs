@@ -6,11 +6,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SearchIcon from '@mui/icons-material/Search';
 import  getAllPlaces from '../../store/places/getAllPlaces';
-import { ModalLayout } from '../layout/ModalLayout';
 import {  FabEditAdd, FabShow } from '../components';
 import { useEffect } from 'react';
 import FabDelete from '../components/FabDelete';
-import { Alert, Box, Button, ButtonGroup, Card, CardActions, CardContent, CardMedia, Divider, FormControl, Grid, IconButton, Modal, Paper, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, ButtonGroup, Card, CardActions, CardContent, CardMedia, Dialog, Divider, FormControl, Grid, IconButton, Link, Paper, Stack, TextField, Typography } from '@mui/material';
 import filtrarDatos from '../../store/places/filtrarDatos';
 import { useFrom } from '../../hooks/useFrom';
 
@@ -66,20 +65,24 @@ export const Searchlist = () => {
     navigate(`?q=${ buscarlugar }`);
     
     };
-      
+
+
      
     
-      //-----------------------------------------------------------------------
-    //-------------------------Modales---------------------------------------
-    //-------------------Capturar información------------------------------
+    //-----------------------------------------------------------------------
+//-------------------------Dialogos---------------------------------------
+//--------------------------------------------------------------------------
+//--------------------Tamaños de los dialogos-------------------------------
+const [fullWidth] = React.useState(true);
+const [maxWidth] = React.useState('md');
      const [formid, setFormid] =React.useState("");
     //----------------------Modal de Editar---------------------------------
     const [openEdit, setOpenEdit] = React.useState(false);
     const handleOpenEdit = () => setOpenEdit(true);
     const handleCloseEdit = () => setOpenEdit(false);
     //Capturar la información de tabala
-    const editData = (id, lugar, estado, latitud, longitud, radio, tipo, referencia) => {
-    const data = { id:id, estado:estado, latitud:latitud, longitud:longitud, lugar:lugar, radio:radio, referencia:referencia, tipo:tipo };
+    const editData = (id, lugar, estado, lat, lng, radio, tipo, referencia, rango,url) => {
+    const data = { id:id, estado:estado, lat:lat, lng:lng, lugar:lugar, radio:radio, referencia:referencia, tipo:tipo, rango:rango, url:url };
     setFormid(data);
     handleOpenEdit(); 
     }
@@ -89,8 +92,8 @@ export const Searchlist = () => {
     const handleOpenShow = () => setOpenShow(true);
     const handleCloseShow = () => setOpenShow(false);
     //Capturar la información de tabala
-    const showData = (id, lugar, estado, latitud, longitud, radio, tipo, referencia) => {
-    const datashow = { id:id, estado:estado, latitud:latitud, longitud:longitud, lugar:lugar, radio:radio, referencia:referencia, tipo:tipo };
+    const showData = (id, lugar, estado, lat, lng, radio, tipo, referencia, rango,url) => {
+    const datashow = { id:id, estado:estado, lat:lat, lng:lng, lugar:lugar, radio:radio, referencia:referencia, tipo:tipo, rango:rango, url:url };
     setFormid(datashow);
     handleOpenShow(); 
     }
@@ -111,6 +114,8 @@ export const Searchlist = () => {
         <Button variant="outlined" size="medium" startIcon={<SearchIcon />} onClick={ busquedaFormHandler }> 
            Buscar
         </Button>
+     
+
 
      </Box>
    <Box sx={{ m: 2 }}/>
@@ -132,6 +137,9 @@ export const Searchlist = () => {
     Ningún lugar con — { q }
     </Alert>
 
+    <Alert variant="filled" severity="info" style={{ display: showSearch ? '' : 'none' }}>
+    Buscar un lugar
+    </Alert>
   </Stack>
 
 
@@ -169,11 +177,11 @@ export const Searchlist = () => {
  
          
  <IconButton color="edit" aria-label="upload picture" onClick={() => { editData(point.id, point.lugar, 
- point.estado, point.latitud, point.longitud, point.radio, point.tipo, point.referencia) }} component="label">
+ point.estado, point.lat, point.lng, point.radio, point.tipo, point.referencia, point.rango, point.url) }} component="label">
  <EditIcon/>
  </IconButton>
  <IconButton color="show" aria-label="upload picture" onClick={() => { showData(point.id, point.lugar, 
- point.estado, point.latitud, point.longitud, point.radio, point.tipo, point.referencia) }} component="label">
+ point.estado, point.lat, point.lng, point.radio, point.tipo, point.referencia, point.rango, point.url) }} component="label">
  <VisibilityIcon/>
  </IconButton>
  <IconButton color="error" aria-label="upload picture" onClick={() => { FabDelete(point, actualizarEstadoPlaces) }} component="label">
@@ -202,26 +210,26 @@ export const Searchlist = () => {
 
 
     {/* Modal de editar */}
-    <Modal
+    <Dialog
       open={openEdit}
       onClose={handleCloseEdit}
+      fullWidth={fullWidth}
+      maxWidth={maxWidth}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={{ ...ModalLayout, width: '50%' }}>
       <FabEditAdd closeEventEdit={handleCloseEdit} fid={formid} actualizarEstadoPlaces={actualizarEstadoPlaces} />
-      </Box>
-    </Modal>
+    </Dialog>
 {/* Modal de Mostrar */}
-<Modal
+<Dialog
       open={openShow}
-      onClose={handleCloseShow}
+      fullWidth={fullWidth}
+      maxWidth={maxWidth}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={{ ...ModalLayout, width: '80%' }}>
-      <FabShow closeEventEdit={handleCloseShow} fid={formid} />
-      </Box>
-    </Modal></div>
+      <FabShow closeEventShow={handleCloseShow} fid={formid} actualizarEstadoPlaces={actualizarEstadoPlaces}  />
+  
+    </Dialog></div>
   )
 }

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Box, IconButton, Modal, Typography } from '@mui/material';
+import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { AddOutlined } from '@mui/icons-material';
 import { GoogleMap, Marker, MarkerClusterer, useJsApiLoader } from '@react-google-maps/api';
 import getAllPlaces from '../../store/places/getAllPlaces';
 import { FabMap } from '../components';
-import { ModalLayout } from '../layout/ModalLayout';
+import { collection, getDocs } from 'firebase/firestore/lite';
+import { FirebaseDB } from '../../firebase/config';
 
 const containerStyle = {
   width: '1210px',
@@ -12,34 +13,37 @@ const containerStyle = {
 };
 
 
-
 export const ShowMap = () => {
-   
-    //----------------obtener los datos de firebase----------------------
-    const [points, setPoints] = useState([]);
-    const actualizarEstadoPlaces = () =>{
+  //----------------obtener los datos de firebase----------------------
+  const [points, setPoints] = useState([]);
+  
+  const actualizarEstadoPlaces = async () => {
+    const collectionRef = collection(FirebaseDB, "points");
+    const data = await getDocs(collectionRef);
+    setPoints(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  };
 
-      getAllPlaces().then((points) => {
-        setPoints(points);
-      });
-    }
-    useEffect(() => {
-      actualizarEstadoPlaces();
-    }, []);
-
+  useEffect(() => {
+    actualizarEstadoPlaces();
+  }, []);
 //-------------------------Modales---------------------------------------
 
 //----------------------Modal de Agregar---------------------------------
 const [openMap, setOpenMap] = React.useState(false);
 const handleOpen = () => setOpenMap(true);
 const handleClose = () => setOpenMap(false);
+const [fullWidth] = React.useState(true);
+const [maxWidth] = React.useState('xl');
+
+
+
 
 //--------------------------------------------------------------------------------------------------------------------
 //-----------------------------Configuración de del mapa--------------------------------------------------------------
 
 const options = {
   imagePath:
-    'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', // so you must have m1.png, m2.png, m3.png, m4.png, m5.png and m6.png in that folder
+    'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
 }
 
   const { isLoaded } = useJsApiLoader({
@@ -53,6 +57,7 @@ const options = {
 
 
   return (
+    
     <div>
       <Box sx={{ m: 2 }}/>
 <Typography variant="body2" color="text.secondary"> 
@@ -97,16 +102,18 @@ const options = {
    }
  </div>
   {/* Modal de ingresar */}
-  <Modal
+  <Dialog
         open={openMap}
         onClose={handleClose}
+        fullWidth={fullWidth}
+        maxWidth={maxWidth}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={{ ...ModalLayout, width: '85%' }}>
         <FabMap closeEventMap={handleClose} actualizarEstadoPlaces={actualizarEstadoPlaces} />
-        </Box>
-      </Modal>
+      </Dialog>
+ 
+ 
     </div>
   )
 }
