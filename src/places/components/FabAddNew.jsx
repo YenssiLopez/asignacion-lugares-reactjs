@@ -73,7 +73,7 @@ const formValidations = {  lugar:  [ (value) => value.length >= 4, 'El lugar es 
   }
 
   //-----------------------Información de  que se envia a firebases
-  const data = { url:url, estado:estado, lat:Number(latitud), lng:Number(longitud), lugar:lugar, radio:radio, referencia: newreferencia, tipo:tipo, rango:rango, timestamp:serverTimestamp() };
+  const data = { url:url, estado:estado, lat:Number(latitud), lng:Number(longitud), lugar:lugar, radio:radio, referencia:newreferencia, tipo:tipo, rango:rango, timestamp:serverTimestamp() };
     
     //.................Botton de guardado
   const onSavePlace = async ( e ) => {

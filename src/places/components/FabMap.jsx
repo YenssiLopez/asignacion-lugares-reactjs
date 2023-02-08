@@ -112,7 +112,7 @@ export const FabMap = ({ closeEventMap, actualizarEstadoPlaces }) => {
 
 
 
-  const data = { url:url, estado:estado, lat:Number(latitud), lng:Number(longitud), lugar:lugar, radio:radio, referencia:referencia, tipo:tipo, rango:rango, timestamp:serverTimestamp() };
+  const data = { url:url, estado:estado, lat:Number(latitud), lng:Number(longitud), lugar:lugar, radio:radio, referencia:newreferencia, tipo:tipo, rango:rango, timestamp:serverTimestamp() };
 
       // Datos de combox
   const currencies = [ { value: ' ', label: ' ', },{ value: 'Disponible', label: 'Disponible', },{ value: 'No Disponible',  label: 'No Disponible', },];

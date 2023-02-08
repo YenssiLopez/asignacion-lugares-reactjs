@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import { AddOutlined } from '@mui/icons-material';
 import { GoogleMap, Marker, MarkerClusterer, useJsApiLoader } from '@react-google-maps/api';
-import getAllPlaces from '../../store/places/getAllPlaces';
 import { FabMap } from '../components';
 import { collection, getDocs } from 'firebase/firestore/lite';
 import { FirebaseDB } from '../../firebase/config';
